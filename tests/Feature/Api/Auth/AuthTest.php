@@ -286,4 +286,26 @@ class AuthTest extends TestCase
             'name' => 'auth_token',
         ]);
     }
+
+    public function test_quest_cannot_access_user_endopint(): void
+    {
+        $response = $this->getJson('/api/user');
+        $response->assertStatus(401);
+    }
+
+    public function test_authenticated_user_can_access_user_endpoint(): void
+    {
+        $user = User::factory()->create();
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        $response = $this->withHeaders([
+            'Authorization' => "Bearer {$token}",
+        ])->getJson('/api/user');
+
+        $response
+            ->assertStatus(200)
+            ->assertJsonFragment([
+                'email' => $user->email,
+            ]);
+    }
 }
