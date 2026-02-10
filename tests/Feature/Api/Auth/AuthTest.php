@@ -268,4 +268,22 @@ class AuthTest extends TestCase
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['name', 'email', 'password']);
     }
+
+    public function test_user_can_logout_and_token_is_revoked(): void
+    {
+        $user = User::factory()->create();
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        $response = $this->withHeaders([
+            'Authorization' => "Bearer {$token}",
+        ])->postJson('/api/auth/logout');
+
+        $response->assertNoContent();
+
+        
+        $this->assertDatabaseMissing('personal_access_tokens', [
+            'tokenable_id' => $user->id,
+            'name' => 'auth_token',
+        ]);
+    }
 }
