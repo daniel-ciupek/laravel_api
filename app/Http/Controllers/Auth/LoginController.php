@@ -17,11 +17,15 @@ class LoginController extends Controller
     public function __invoke(LoginRequest $request)
     {
         if (! Auth::attempt($request->only('email', 'password'))) {
-          throw ValidationException::withMessages([
+            throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
-    }
+        }
 
-    $request->session()->regenerate();
-}
+        $request->session()->regenerate();
+
+        return response()->json([
+            'user' => $request->user(),
+        ]);
+    }
 }

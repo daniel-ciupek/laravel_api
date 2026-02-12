@@ -17,12 +17,16 @@ class RegisterController extends Controller
      */
     public function __invoke(RegisterRequest $request)
     {
-        $user =User::create($request->only('name','email') + [
+        $user = User::create($request->only('name', 'email') + [
             'password' => Hash::make($request->password),
         ]);
 
         Auth::login($user);
 
         $request->session()->regenerate();
-}
+
+        return response()->json([
+            'user' => $user,
+        ], 201);
+    }
 }
