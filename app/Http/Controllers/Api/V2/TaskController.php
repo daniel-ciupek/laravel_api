@@ -23,6 +23,7 @@ class TaskController extends Controller
         return request()
             ->user()
             ->tasks()
+            ->get()
             ->toResourceCollection();
     }
 

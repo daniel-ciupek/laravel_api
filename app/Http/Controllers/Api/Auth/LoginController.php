@@ -2,20 +2,15 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use App\Models\User;
-use App\Http\Requests\LoginRequest;
 use App\Http\Controllers\Controller;
-use Symfony\Component\HttpFoundation\Response;
+use App\Http\Requests\LoginRequest;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\Response;
 
 class LoginController extends Controller
 {
-    /**
-     * Handle the incoming request.
-     * SPA cookie-based authentication — no Bearer token is returned.
-     */
     public function __invoke(LoginRequest $request)
     {
         $user = User::where('email', $request->email)->first();
@@ -26,11 +21,11 @@ class LoginController extends Controller
             ]);
         }
 
-        Auth::login($user);
-        $request->session()->regenerate();
+        $token = $user->createToken('api-token')->plainTextToken;
 
         return response()->json([
-            'user' => $user
+            'token' => $token,
+            'user'  => $user
         ], Response::HTTP_OK);
     }
 }
