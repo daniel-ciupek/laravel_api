@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
-use Illuminate\Http\Request;
 use App\Http\Requests\LoginRequest;
 use App\Http\Controllers\Controller;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,6 +14,7 @@ class LoginController extends Controller
 {
     /**
      * Handle the incoming request.
+     * SPA cookie-based authentication — no Bearer token is returned.
      */
     public function __invoke(LoginRequest $request)
     {
@@ -25,9 +26,10 @@ class LoginController extends Controller
             ]);
         }
 
-        $token = $user->createToken('laravel_api-token')->plainTextToken;
+        Auth::login($user);
+        $request->session()->regenerate();
+
         return response()->json([
-            'token' => $token,
             'user' => $user
         ], Response::HTTP_OK);
     }
