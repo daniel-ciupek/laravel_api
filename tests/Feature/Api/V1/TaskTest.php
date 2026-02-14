@@ -56,7 +56,7 @@ class TaskTest extends TestCase
     }
 
     // PATCH – oznaczenie zadania jako completed
-    public function test_complete_task()
+    public function test_guest_complete_task()
     {
         $task = Task::factory()->create([
             'is_completed' => false,
@@ -79,7 +79,7 @@ class TaskTest extends TestCase
     }
 
     // DELETE – usuwanie zadania
-    public function test_delete_task()
+    public function test_guest_delete_task()
     {
         $task = Task::factory()->create();
 
@@ -93,7 +93,7 @@ class TaskTest extends TestCase
     }
 
     // POST – walidacja: puste pole name
-public function test_create_task_requires_name()
+public function test_guest_create_task_requires_name()
 {
     $response = $this->postJson('/api/v1/tasks', [
         'name' => '',
