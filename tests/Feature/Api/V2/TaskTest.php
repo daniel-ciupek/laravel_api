@@ -37,7 +37,7 @@ class TaskTest extends TestCase
     public function test_update_task()
     {
         $user = User::factory()->create();
-        $task = Task::factory()->create(['name' => 'Old Task Name']);
+        $task = Task::factory()->for($user)->create(['name' => 'Old Task Name']);
 
         $response = $this->actingAs($user, 'sanctum')->putJson("/api/v2/tasks/{$task->id}", [
             'name' => 'Updated Task Name',
@@ -56,7 +56,7 @@ class TaskTest extends TestCase
     public function test_complete_task()
     {
         $user = User::factory()->create();
-        $task = Task::factory()->create(['is_completed' => false]);
+        $task = Task::factory()->for($user)->create(['is_completed' => false]);
 
         $response = $this->actingAs($user, 'sanctum')->patchJson("/api/v2/tasks/{$task->id}/complete", [
             'is_completed' => true,
@@ -75,7 +75,7 @@ class TaskTest extends TestCase
     public function test_delete_task()
     {
         $user = User::factory()->create();
-        $task = Task::factory()->create();
+        $task = Task::factory()->for($user)->create();
 
         $response = $this->actingAs($user, 'sanctum')->deleteJson("/api/v2/tasks/{$task->id}");
 
