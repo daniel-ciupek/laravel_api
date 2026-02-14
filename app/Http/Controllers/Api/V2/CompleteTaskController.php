@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api\V2;
 
 use App\Models\Task;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CompleteTaskRequest;
+use Illuminate\Support\Facades\Gate;
 
 class CompleteTaskController extends Controller
 {
@@ -14,6 +14,7 @@ class CompleteTaskController extends Controller
      */
     public function __invoke(CompleteTaskRequest $request, Task $task)
     {
+        Gate::authorize('update', $task);
         $task->is_completed = $request->is_completed;
         $task->save();
 
