@@ -6,9 +6,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\MeController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+
 
 
 Route::prefix('auth')->group((function() {
