@@ -23,6 +23,8 @@ class TaskController extends Controller
         return request()
             ->user()
             ->tasks()
+            ->handleSort(request()->query('sort_by') ?? 'time')
+            ->with('priority')
             ->get()
             ->toResourceCollection();
     }
@@ -38,6 +40,7 @@ class TaskController extends Controller
             ->user()
             ->tasks()
             ->create($request->validated());
+            $task->load('priority');
             
         return $task->toResource();
     }
@@ -49,6 +52,7 @@ class TaskController extends Controller
     {
        Gate::authorize('view', $task);
 
+        $task->load('priority');
         return $task->toResource();
     }
 
@@ -60,6 +64,7 @@ class TaskController extends Controller
        Gate::authorize('update', $task);
 
         $task->update($request->validated());
+        $task->load('priority');
         return $task->toResource();
     }
 
