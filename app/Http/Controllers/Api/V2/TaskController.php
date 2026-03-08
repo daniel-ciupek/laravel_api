@@ -12,6 +12,7 @@ use Illuminate\Support\Arr;
 use App\Services\TaskInputParser;
 
 
+
 class TaskController extends Controller
 {
 
@@ -37,15 +38,17 @@ public function __construct(private TaskInputParser $parser)
     }
 
     private function prepareData(array $data): array
-    {
-        $parsed = $this->parser->parse($data['name']);
-        if ($parsed) {
-            $data['name'] = $parsed['name'];
-            $data['priority_id'] = $data['priority_id'] ?? ($parsed['priority_id'] ?? null);
-            $data['due_date'] = $data['due_date'] ?? ($parsed['due_date'] ?? null);
-        }
-        return $data;
+{
+    $rawName = $data['name'];
+    $parsed = $this->parser->parse($data['name']);
+    if ($parsed) {
+        $data['name'] = $parsed['name'];
+        $data['priority_id'] = $data['priority_id'] ?? ($parsed['priority_id'] ?? null);
+        $data['due_date'] = $data['due_date'] ?? ($parsed['due_date'] ?? null);
     }
+    $data['raw_name'] = $rawName;
+    return $data;
+}
 
     /**
      * Store a newly created resource in storage.

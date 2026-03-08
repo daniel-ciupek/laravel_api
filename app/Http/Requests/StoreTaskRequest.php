@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Models\Priority;
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
+use App\Services\TaskInputParser;
 
 class StoreTaskRequest extends FormRequest
 {
@@ -28,6 +29,23 @@ class StoreTaskRequest extends FormRequest
             'priority_id' => ['nullable', Rule::exists(Priority::class, 'id')],
             'due_date' => ['nullable', 'date']
 
+        ];
+    }
+     public function after(): array
+    {
+        return [
+            function ($validator) {
+                $name = $this->input('name');
+                if ($name) {
+                    $parser = app(TaskInputParser::class);
+                    $parsed = $parser->parse($name);
+                    // Jeśli parser zwraca null, oznacza to że po usunięciu tagów
+                    // (@today, !high) nie zostało nic sensownego jako nazwa
+                    if ($parsed === null) {
+                        $validator->errors()->add('name', 'The name field is required.');
+                    }
+                }
+            }
         ];
     }
 }
