@@ -8,10 +8,16 @@ use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Arr;
+use App\Services\TaskInputParser;
 
 
 class TaskController extends Controller
 {
+
+public function __construct(private TaskInputParser $parser)
+    {
+    }
     /**
      * Display a listing of the resource.
      */
@@ -30,6 +36,17 @@ class TaskController extends Controller
             ->toResourceCollection();
     }
 
+    private function prepareData(array $data): array
+    {
+        $parsed = $this->parser->parse($data['name']);
+        if ($parsed) {
+            $data['name'] = $parsed['name'];
+            $data['priority_id'] = $data['priority_id'] ?? ($parsed['priority_id'] ?? null);
+            $data['due_date'] = $data['due_date'] ?? ($parsed['due_date'] ?? null);
+        }
+        return $data;
+    }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -37,10 +54,10 @@ class TaskController extends Controller
     {
         Gate::authorize('create', Task::class);
 
-        $task = request()
-            ->user()
-            ->tasks()
-            ->create($request->validated());
+         $data = $request->validated();
+        $task = $request->user()->tasks()->create(
+            $this->prepareData($data)
+        );
             $task->load('priority');
             
         return $task->toResource();
@@ -60,11 +77,13 @@ class TaskController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateTaskRequest $request, Task $task)
+    public function update(UpdateTaskRequest $request, Task $task, TaskInputParser $parser)
     {
        Gate::authorize('update', $task);
 
-        $task->update($request->validated());
+        $task->update(
+            $this->prepareData($request->validated())
+        );
         $task->load('priority');
         return $task->toResource();
     }

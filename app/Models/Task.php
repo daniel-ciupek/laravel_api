@@ -14,6 +14,10 @@ class Task extends Model
 
     protected $fillable = ['name', 'priority_id', 'due_date'];
 
+     protected $casts = [
+        'due_date' => 'datetime',
+    ];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -47,6 +51,16 @@ class Task extends Model
                 $to = $from->copy()->endOfDay();
                 $query->whereBetween('due_date', [$from, $to])
                     ->orWhereNull('due_date');
+            })
+             ->when($dueDate === 'next3d', function ($query) {
+                $from = now()->startOfDay();
+                $to = now()->addDays(3)->endOfDay();
+                $query->whereBetween('due_date', [$from, $to]);
+            })
+            ->when($dueDate === 'nextweek', function ($query) {
+                $from = now()->startOfDay();
+                $to = now()->addWeek()->endOfDay();
+                $query->whereBetween('due_date', [$from, $to]);
             })
             ->when($dueDate === 'overdue', function ($query) {
                 $query->where('due_date', '<', now()->startOfDay());
