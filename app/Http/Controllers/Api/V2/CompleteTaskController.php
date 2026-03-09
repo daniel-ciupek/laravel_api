@@ -17,6 +17,7 @@ class CompleteTaskController extends Controller
         Gate::authorize('update', $task);
         $task->is_completed = $request->is_completed;
         $task->save();
+        $task->load('priority');
 
         return $task->toResource();
     }

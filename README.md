@@ -1,59 +1,139 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# TodoList — Vue 3 Frontend
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplikacja SPA (Single Page Application) do zarządzania zadaniami, zbudowana w Vue 3 z Composition API. Frontend komunikuje się z Laravel API przez Laravel Sanctum (autentykacja cookie-based).
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Wymagania
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- Node.js >= 18
+- npm >= 9
+- Działający backend [laravel_api](../laravel_api) dostępny pod `http://localhost:8000`
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## Technologie
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+- **Vue 3** — Composition API, `<script setup>`
+- **Pinia** — zarządzanie stanem aplikacji
+- **Vue Router 4** — routing z navigation guards
+- **Axios** — komunikacja z API
+- **v-calendar** — komponent DatePicker do wyboru daty
+- **date-fns** — formatowanie i manipulacja datami
+- **Bootstrap 5** — stylowanie UI
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+## Instalacja i uruchomienie
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+# 1. Sklonuj repozytorium i przejdź do folderu frontendu
+cd todo-app
 
-### Premium Partners
+# 2. Zainstaluj zależności
+npm install
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+# 3. Skopiuj plik środowiskowy i skonfiguruj zmienne
+cp .env.example .env
 
-## Contributing
+# 4. Uruchom serwer deweloperski
+npm run dev
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Aplikacja będzie dostępna pod adresem: `http://localhost:5173`
 
-## Code of Conduct
+---
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Zmienne środowiskowe
 
-## Security Vulnerabilities
+Plik `.env` (na podstawie `.env.example`):
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```env
+VITE_BASE_URL=http://localhost:8000
+VITE_API_PATH=/api/v2/
+```
 
-## License
+`VITE_BASE_URL` — adres backendu Laravel  
+`VITE_API_PATH` — prefiks ścieżki API (wersja v2)
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+
+## Struktura projektu
+
+```
+src/
+├── assets/          # Globalne style CSS
+├── components/
+│   ├── dropdown/    # Generyczne komponenty dropdown (Dropdown, DropdownItem, DropdownTrigger)
+│   ├── icons/       # Komponenty ikon SVG
+│   ├── summaries/   # Komponenty strony Summary (Summaries, Summary, SummaryFilter)
+│   └── tasks/       # Komponenty zarządzania taskami (Task, Tasks, NewTask, FilterTasks, SortTasks, SelectPriority, TaskActions)
+├── composables/
+│   ├── useDateFormatter.js  # Formatowanie dat (lokalny format i wyświetlanie)
+│   └── useFocusInput.js     # Pomocnik do focusowania inputa po akcji
+├── http/            # Warstwa komunikacji z API
+│   ├── api.js           # Instancja Axios z baseURL
+│   ├── auth-api.js      # Endpointy autoryzacji (login, register, logout, me)
+│   ├── task-api.js      # Endpointy tasków (CRUD, complete)
+│   ├── priority-api.js  # Endpoint priorytetów
+│   └── summary-api.js   # Endpoint podsumowań
+├── pages/
+│   ├── HomePage.vue
+│   ├── TasksPage.vue
+│   ├── SummaryPage.vue
+│   ├── LoginPage.vue
+│   ├── RegisterPage.vue
+│   └── errors/NotFoundErrorPage.vue
+├── router/
+│   ├── index.js     # Navigation guard z obsługą inicjalizacji sesji
+│   └── routes.js    # Definicje tras z meta (auth / guest)
+└── stores/
+    ├── auth.js      # Stan użytkownika, login, logout, register
+    ├── task.js      # Lista tasków, operacje CRUD
+    ├── priority.js  # Lista priorytetów
+    └── summary.js   # Dane podsumowań
+```
+
+---
+
+## Funkcjonalności
+
+**Autentykacja** — rejestracja i logowanie przez Laravel Sanctum (cookie-based). Navigation guard chroni trasy wymagające logowania i zapobiega wchodzeniu zalogowanego użytkownika na strony gościa. Przy odświeżeniu strony sesja jest weryfikowana przed podjęciem decyzji o nawigacji.
+
+**Zarządzanie taskami** — dodawanie, edytowanie (dwuklik lub ikona ołówka), oznaczanie jako ukończone, usuwanie. Lista tasków dzieli się na aktywne i ukończone (z przyciskiem show/hide).
+
+**Natural input** — podczas wpisywania nowego zadania można użyć specjalnej składni bezpośrednio w polu tekstowym. Parser po stronie backendu wyciąga z tekstu priorytety (`!high`, `!medium`, `!low`) oraz daty (`@today`, `@tomorrow`, `@nextweek`, `@YYYY-MM-DD`). Tagi są wizualnie podświetlane podczas pisania.
+
+**Priorytety** — każdy task może mieć przypisany priorytet (High / Medium / Low / brak). Priorytet jest wizualnie oznaczony kolorem checkboxa. Można sortować taski według priorytetu.
+
+**Daty** — każdy task może mieć przypisaną datę wykonania. Dostępne filtry: Inbox, Today, Next 3 days, Next week, Overdue.
+
+**Sortowanie** — taski można sortować według czasu dodania, nazwy lub priorytetu.
+
+**Summary** — strona z podsumowaniem tasków z filtrowaniem po okresie (Today, Yesterday, This week, Last week, This month, Last month).
+
+---
+
+## Routing i ochrona tras
+
+Trasy z `meta: { auth: true }` wymagają zalogowania — nieautoryzowany użytkownik jest przekierowywany na `/login` z zapisaniem docelowego URL w query (`?redirect=...`). Po zalogowaniu użytkownik trafia na zapisany adres lub domyślnie na `/tasks`.
+
+Trasy z `meta: { guest: true }` są dostępne tylko dla niezalogowanych — zalogowany użytkownik jest przekierowywany na `/tasks`.
+
+---
+
+## Budowanie produkcyjne
+
+```bash
+# Zbuduj aplikację do folderu dist/
+npm run build
+
+# Podgląd zbudowanej wersji lokalnie
+npm run preview
+```
+
+---
+
+## Powiązane projekty
+
+Backend API: [laravel_api](../laravel_api) — Laravel 11 + Sanctum

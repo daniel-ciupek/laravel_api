@@ -26,12 +26,12 @@ public function __construct(private TaskInputParser $parser)
     {
          Gate::authorize('viewAny', Task::class);
 
-        //return TaskResource::collection(Task::all());
-        return request()
+        
+        return $request
             ->user()
             ->tasks()
-            ->handleSort(request()->query('sort_by') ?? 'time')
-            ->handleFilter(request()->query('due_date'))
+            ->handleSort($request->query('sort_by') ?? 'time')
+            ->handleFilter($request->query('due_date'))
             ->with('priority')
             ->get()
             ->toResourceCollection();
@@ -80,7 +80,7 @@ public function __construct(private TaskInputParser $parser)
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateTaskRequest $request, Task $task, TaskInputParser $parser)
+    public function update(UpdateTaskRequest $request, Task $task)
     {
        Gate::authorize('update', $task);
 

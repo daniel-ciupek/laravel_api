@@ -16,17 +16,21 @@ class TaskInputParser
         }
 
         $dueDate = null;
-        if (preg_match('/@(.+?)(?:\s+!|\s*$)/', $input, $matches)) {
-            $raw = strtolower(trim($matches[1]));
-            $dueDate = match($raw) {
-                'today' => now(),
-                'tomorrow' => now()->addDay(),
-                'next2d' => now()->addDays(2),
-                'next3d' => now()->addDays(3),
-                'nextweek' => now()->addWeek(),
-                default => Carbon::parse($raw, now()->getTimezone())
-            };
-        }
+if (preg_match('/@(.+?)(?:\s+!|\s*$)/', $input, $matches)) {
+    $raw = strtolower(trim($matches[1]));
+    try {
+        $dueDate = match($raw) {
+            'today' => now(),
+            'tomorrow' => now()->addDay(),
+            'next2d' => now()->addDays(2),
+            'next3d' => now()->addDays(3),
+            'nextweek' => now()->addWeek(),
+            default => Carbon::parse($raw, now()->getTimezone())
+        };
+    } catch (\Exception $e) {
+        $dueDate = null;
+    }
+}
 
         $patterns = [
             '/\s?@(.+?)(?:\s+!|\s*$)/', // Remove due date (and the space in front of it)

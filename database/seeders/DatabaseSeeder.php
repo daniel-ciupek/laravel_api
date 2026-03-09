@@ -9,6 +9,7 @@ use Illuminate\Database\Seeder;
 use Carbon\CarbonPeriod;
 
 
+
 class DatabaseSeeder extends Seeder
 {
     use WithoutModelEvents;
@@ -18,6 +19,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+
+    
 
     $start = now()->startOfMonth()->subMonthsNoOverflow();
         $end = now();

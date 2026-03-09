@@ -39,8 +39,6 @@ class StoreTaskRequest extends FormRequest
                 if ($name) {
                     $parser = app(TaskInputParser::class);
                     $parsed = $parser->parse($name);
-                    // Jeśli parser zwraca null, oznacza to że po usunięciu tagów
-                    // (@today, !high) nie zostało nic sensownego jako nazwa
                     if ($parsed === null) {
                         $validator->errors()->add('name', 'The name field is required.');
                     }
